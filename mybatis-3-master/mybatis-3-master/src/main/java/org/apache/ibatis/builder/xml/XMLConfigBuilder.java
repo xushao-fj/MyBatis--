@@ -93,9 +93,11 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   public Configuration parse() {
     if (parsed) {
+      // config-xml配置信息只能被读取一次
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    // 解析xml中的configuration配置信息, 包括事务管理器, datasource, 解析mapper.xml等信息
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -108,6 +110,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       loadCustomVfs(settings);
       loadCustomLogImpl(settings);
       typeAliasesElement(root.evalNode("typeAliases"));
+      // 加载插件, mybatis允许用户定义拦截器, 用于在SQL执行前后的一些特殊处理
       pluginElement(root.evalNode("plugins"));
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
@@ -117,6 +120,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // 解析mappers配置信息, 同时获取解析执行语句
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -272,6 +276,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
   }
 
+  /**
+   * 环境准备
+   * @param context
+   * @throws Exception
+   */
   private void environmentsElement(XNode context) throws Exception {
     if (context != null) {
       if (environment == null) {
@@ -280,9 +289,11 @@ public class XMLConfigBuilder extends BaseBuilder {
       for (XNode child : context.getChildren()) {
         String id = child.getStringAttribute("id");
         if (isSpecifiedEnvironment(id)) {
+          // 通过配置生成 事务工厂,  datasource, 并保存到 mybatis configuration中
           TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
           DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
           DataSource dataSource = dsFactory.getDataSource();
+          // 将 事务工厂(持有事务管理器), 数据源工厂(持有datasource)设置到 environment环境中
           Environment.Builder environmentBuilder = new Environment.Builder(id)
               .transactionFactory(txFactory)
               .dataSource(dataSource);
@@ -326,6 +337,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     if (context != null) {
       String type = context.getStringAttribute("type");
       Properties props = context.getChildrenAsProperties();
+      // 通过加载数据库注册驱动生成 datasource, factory 持有datasource信息
       DataSourceFactory factory = (DataSourceFactory) resolveClass(type).getDeclaredConstructor().newInstance();
       factory.setProperties(props);
       return factory;

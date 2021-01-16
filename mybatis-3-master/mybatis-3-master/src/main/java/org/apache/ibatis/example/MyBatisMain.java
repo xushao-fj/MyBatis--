@@ -22,9 +22,9 @@ public class MyBatisMain {
 
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
     SqlSession session = sqlSessionFactory.openSession();
-    BlogMapper mapper = session.getMapper(BlogMapper.class);
-    Blog blog = mapper.selectBlog(113);
-    System.out.println(blog);
+//    BlogMapper mapper = session.getMapper(BlogMapper.class);
+//    Blog blog = mapper.selectBlog(113);
+//    System.out.println(blog);
     Blog o = session.selectOne("org.apache.ibatis.example.mapper.BlogMapper.selectBlog", 113);
     System.out.println(o);
 

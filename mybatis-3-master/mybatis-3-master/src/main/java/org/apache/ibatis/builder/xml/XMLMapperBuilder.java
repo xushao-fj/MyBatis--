@@ -108,7 +108,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void configurationElement(XNode context) {
     try {
-      String namespace = context.getStringAttribute("namespace");
+      String namespace = context.getStringAttribute("namespace"); // namespace -> mapper.xml文件中定义的 mapper接口
       if (namespace == null || namespace.isEmpty()) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }

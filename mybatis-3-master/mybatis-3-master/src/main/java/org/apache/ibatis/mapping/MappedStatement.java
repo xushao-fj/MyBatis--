@@ -30,6 +30,7 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * mapper 映射语句
  */
 public final class MappedStatement {
 
