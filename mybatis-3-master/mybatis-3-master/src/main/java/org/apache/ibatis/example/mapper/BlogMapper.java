@@ -1,5 +1,6 @@
 package org.apache.ibatis.example.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.example.po.Blog;
 
@@ -11,4 +12,6 @@ public interface BlogMapper {
 
   @Select("SELECT * FROM blog WHERE id = #{id}")
   Blog selectBlog(int id);
+
+  Blog selectByIdAndName(@Param("id") Integer id, @Param("name") String name);
 }

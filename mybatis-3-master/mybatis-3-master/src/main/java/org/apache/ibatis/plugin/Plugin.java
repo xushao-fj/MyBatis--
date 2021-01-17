@@ -42,9 +42,9 @@ public class Plugin implements InvocationHandler {
 
   public static Object wrap(Object target, Interceptor interceptor) {
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
-    Class<?> type = target.getClass();
-    Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
-    if (interfaces.length > 0) {
+    Class<?> type = target.getClass(); // 被代理对象, ex: Executor, StatementHandler, ParameterHandler, ResultSetHandler
+    Class<?>[] interfaces = getAllInterfaces(type, signatureMap); // 获取代理对象的接口
+    if (interfaces.length > 0) { // 使用jdk动态代理的对象必须要有接口,自定义插件一定要实现Interceptor接口,否则无法被代理
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,
@@ -56,11 +56,11 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
-      Set<Method> methods = signatureMap.get(method.getDeclaringClass());
-      if (methods != null && methods.contains(method)) {
+      Set<Method> methods = signatureMap.get(method.getDeclaringClass()); // 获取被拦截的方法签名
+      if (methods != null && methods.contains(method)) {// 如果当前执行的方法属于被拦截的方法,那就执行代理对象的方法intercept
         return interceptor.intercept(new Invocation(target, method, args));
       }
-      return method.invoke(target, args);
+      return method.invoke(target, args); // 如果没有方法被代理,则直接调用原方法
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);
     }

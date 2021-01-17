@@ -28,11 +28,11 @@ import java.util.regex.Matcher;
  * SQL执行时间输出 插件
  */
 @Intercepts(value = {
-  @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }),
-  @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
-    RowBounds.class, ResultHandler.class }),
-  @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
-    RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class }) })
+  @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+  @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,
+    RowBounds.class, ResultHandler.class}),
+  @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,
+    RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})})
 public class SqlPrintInterceptor implements Interceptor {
 
   private static final Logger log = LoggerFactory.getLogger(SqlPrintInterceptor.class);
@@ -43,7 +43,7 @@ public class SqlPrintInterceptor implements Interceptor {
   public Object intercept(Invocation invocation) throws Throwable {
     MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
     Object parameterObject = null;
-    if (invocation.getArgs().length >1) {
+    if (invocation.getArgs().length > 1) {
       parameterObject = invocation.getArgs()[1];
     }
     long start = System.currentTimeMillis();
@@ -53,7 +53,7 @@ public class SqlPrintInterceptor implements Interceptor {
     Configuration configuration = mappedStatement.getConfiguration();
     String sql = getSql(boundSql, parameterObject, configuration);
     long end = System.currentTimeMillis();
-    long timing = end -start;
+    long timing = end - start;
     log.info("执行SQL耗时: {} ms, - Id: {} - Sql: {}", timing, statementId, sql);
     return result;
   }
@@ -101,9 +101,15 @@ public class SqlPrintInterceptor implements Interceptor {
     return sql.replaceFirst("\\?", Matcher.quoteReplacement(result));
   }
 
+  /**
+   * 将插件包装设置到 executor中
+   * @param target
+   * @return
+   */
   @Override
   public Object plugin(Object target) {
     if (target instanceof Executor) {
+      // 把被拦截对象生成一个代理对象
       return Plugin.wrap(target, this);
     }
     return target;
@@ -111,6 +117,6 @@ public class SqlPrintInterceptor implements Interceptor {
 
   @Override
   public void setProperties(Properties properties) {
-
+    // 可以自定义一些属性
   }
 }
