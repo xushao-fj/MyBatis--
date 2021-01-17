@@ -158,6 +158,9 @@ public class MapperAnnotationBuilder {
     }
   }
 
+  /**
+   * 加载 mapper.xml 配置中的信息
+   */
   private void loadXmlResource() {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
@@ -292,7 +295,7 @@ public class MapperAnnotationBuilder {
     }
     return null;
   }
-
+  // 解析执行语句, 基于接口方法
   void parseStatement(Method method) {
     final Class<?> parameterTypeClass = getParameterType(method);
     final LanguageDriver languageDriver = getLanguageDriver(method);

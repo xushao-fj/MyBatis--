@@ -104,23 +104,30 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void parseConfiguration(XNode root) {
     try {
+      // 分步骤解析
       // issue #117 read properties first
+      // properties, 数据库链接信息
       propertiesElement(root.evalNode("properties"));
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
       loadCustomLogImpl(settings);
+      // 类型别名
       typeAliasesElement(root.evalNode("typeAliases"));
       // 加载插件, mybatis允许用户定义拦截器, 用于在SQL执行前后的一些特殊处理
       pluginElement(root.evalNode("plugins"));
+      // 对象工厂
       objectFactoryElement(root.evalNode("objectFactory"));
+      // 对象包装工厂
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
+      // 设置
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      // 类型处理器, 比如 mysql 中的 varchar 对应到 Java中的 String
       typeHandlerElement(root.evalNode("typeHandlers"));
-      // 解析mappers配置信息, 同时获取解析执行语句
+      // 映射器, 解析mappers配置信息, 同时获取解析执行语句
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -373,7 +380,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   }
 
   private void mapperElement(XNode parent) throws Exception {
-    if (parent != null) {
+    if (parent != null) { // mapper xml 配置有四种, 基于 package , url, resource, interface
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");

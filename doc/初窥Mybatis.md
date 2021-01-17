@@ -52,5 +52,9 @@ public class MyBatisMain {
 -> org.apache.ibatis.executor.resultset.DefaultResultSetHandler.handleResultSets
 
 
+![mybatis执行流程](https://cdn.nlark.com/yuque/0/2020/png/1387387/1607609572382-bc2438a1-fe6e-460d-9348-6f78069f8cd2.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_20%2Ctext_6bKB54-t5a2m6Zmi5Ye65ZOB%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10)
+
+
+
 
 

@@ -19,14 +19,17 @@ public class MyBatisMain {
   public static void main(String[] args) throws IOException {
     String resource = "mybatis-config.xml";
     InputStream inputStream = Resources.getResourceAsStream(resource);
-
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+    //
     SqlSession session = sqlSessionFactory.openSession();
-//    BlogMapper mapper = session.getMapper(BlogMapper.class);
-//    Blog blog = mapper.selectBlog(113);
-//    System.out.println(blog);
     Blog o = session.selectOne("org.apache.ibatis.example.mapper.BlogMapper.selectBlog", 113);
     System.out.println(o);
+
+    // mapper接口执行方式
+    BlogMapper mapper = session.getMapper(BlogMapper.class);
+    Blog blog = mapper.selectBlog(113);
+    System.out.println(blog);
 
   }
 

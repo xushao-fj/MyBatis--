@@ -80,8 +80,10 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
       if (Object.class.equals(method.getDeclaringClass())) {
+        // 调用有接口实现类的, 用户自定义的mapper 接口实现
         return method.invoke(this, args);
       } else {
+        // 动态代理方法调用
         return cachedInvoker(method).invoke(proxy, method, args, sqlSession);
       }
     } catch (Throwable t) {
